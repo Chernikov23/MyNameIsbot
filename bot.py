@@ -7,14 +7,21 @@ from tortoise import Tortoise, run_async
 from config import TOKEN, TORTOISE_ORM
 import os
 import handlers
+from middlewares import UsernameCheckMiddleware
+from aiogram.fsm.storage.memory import MemoryStorage
+
 
 load_dotenv()
 
 bot = Bot(TOKEN)
-dp = Dispatcher() 
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
+dp.message.middleware(UsernameCheckMiddleware())
+dp.callback_query.middleware(UsernameCheckMiddleware())
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 logger.info("Бот запущен и работает...")
 
